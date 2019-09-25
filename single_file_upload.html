@@ -5,8 +5,8 @@
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>File Uploader</title>
-    <meta name="description" content="Multiple Image Upload with preview">
-    <meta name="keywords" content="image-Upload, html, image, multiple-image-upload, image-upload-with-preview">
+    <meta name="description" content="Single Image Upload with preview">
+    <meta name="keywords" content="image-Upload, html, image, Single-image-upload, image-upload-with-preview">
     <meta name="author" content="Rasith Upamal">
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css'
@@ -14,12 +14,13 @@
 </head>
 
 <body>
-    <h2>Upload Multiple Images with Preview.</h2>
+    <h2>Upload Single Images with Preview.</h2>
     <div class="container">
         <div class="row">
             <div class="col-sm-12">
-                <form style="margin: 120px" id="file-form" action="upload.php" method="POST">
-                    <input type="file" id="file-select" name="photos[]" multiple onchange="preview_image();" />
+                <form style="margin: 120px" id="file-form" action="single_upload.php" method="POST">
+                    <input type="file" id="file-select" onchange="preview_image();" />
+                    <input type="file" id="file-select2" onchange="preview_image2();" />
                     <button type="submit" id="upload-button">Upload</button>
                 </form>
             </div>
@@ -34,6 +35,7 @@
     <script>
         var form = document.getElementById('file-form');
         var fileSelect = document.getElementById('file-select');
+        var fileSelect2 = document.getElementById('file-select2');
         var uploadButton = document.getElementById('upload-button');
         var preview = document.getElementById("image_preview");
         form.onsubmit = function (event) {
@@ -42,20 +44,26 @@
             uploadButton.innerHTML = 'Uploading...';
             // Get the selected files from the input.
             var files = fileSelect.files;
+            var files2 = fileSelect2.files;
+            console.log(files[0]);
             // Create a new FormData object.
             var formData = new FormData();
             // Loop through each of the selected files.
-            for (var i = 0; i < files.length; i++) {
-                var file = files[i];
-                // Check the file type.
-                if (!file.type.match('image.*')) {
-                    continue;
-                }
-                // Add the file to the request.
-                formData.append('fileToUpload[' + i + ']', file, file.name);
-                formData.append('file_path', "users/1/");
+            // for (var i = 0; i < files.length; i++) {
+            //     var file = files[i];
+            //     // Check the file type.
+            //     if (!file.type.match('image.*')) {
+            //         continue;
+            //     }
+            //     // Add the file to the request.
+            //     formData.append('avatar[' + i + ']', file, file.name);
+            //     formData.append('file_path', "users/1/");
 
-            }
+            // }
+            formData.append('profile', files[0], files[0].name);
+            formData.append('file_path', "users/1/");
+            formData.append('cover', files2[0], files2[0].name);
+
             $.ajax({
                 type: 'POST',
                 url: $(this).attr('action'),
@@ -69,6 +77,7 @@
                     // File(s) uploaded.
                     uploadButton.innerHTML = 'Upload';
                     document.getElementById("file-select").value = "";
+                    document.getElementById("file-select2").value = "";
                     preview.parentNode.removeChild(preview);
                 },
                 error: function (data) {
@@ -80,6 +89,13 @@
 
         function preview_image() {
             var total_file = document.getElementById("file-select").files.length;
+            for (var i = 0; i < total_file; i++) {
+                $('#image_preview').append("<span><img style='margin:10px; width:200px; height:150px;' src='" + URL.createObjectURL(event.target.files[i]) + "'></span>");
+            }
+        }
+
+        function preview_image2() {
+            var total_file = document.getElementById("file-select2").files.length;
             for (var i = 0; i < total_file; i++) {
                 $('#image_preview').append("<span><img style='margin:10px; width:200px; height:150px;' src='" + URL.createObjectURL(event.target.files[i]) + "'></span>");
             }

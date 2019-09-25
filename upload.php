@@ -7,7 +7,7 @@ $response = array();
 $upload_dir = 'storage/';
 $server_url = 'http://127.0.0.1:8000';
 
-if($_FILES['avatar'])
+if($_FILES['fileToUpload'])
 {    
     $upload_dir = $upload_dir . $_POST["file_path"];
     //if diertory not exists create new
@@ -15,11 +15,11 @@ if($_FILES['avatar'])
         mkdir($upload_dir, 0777, true);
     }
     // code will be added here.
-    $total_files = count($_FILES['avatar']['name']);
+    $total_files = count($_FILES['fileToUpload']['name']);
     for($i = 0; $i < $total_files; $i++) {
-        $avatar_name = $_FILES["avatar"]["name"][$i];
-        $avatar_tmp_name = $_FILES["avatar"]["tmp_name"][$i];
-        $error = $_FILES["avatar"]["error"][$i];
+        $avatar_name = $_FILES["fileToUpload"]["name"][$i];
+        $avatar_tmp_name = $_FILES["fileToUpload"]["tmp_name"][$i];
+        $error = $_FILES["fileToUpload"]["error"][$i];
         
         if($error > 0){
             $response = array(
@@ -35,7 +35,7 @@ if($_FILES['avatar'])
             $upload_name = preg_replace('/\s+/', '-', $upload_name);
 
             if(move_uploaded_file($avatar_tmp_name , $upload_name)) {
-                $response = array(
+                $response[$i] = array(
                     "status" => "success",
                     "error" => false,
                     "message" => "File uploaded successfully",
